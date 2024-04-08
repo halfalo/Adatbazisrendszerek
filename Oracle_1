@@ -1,0 +1,125 @@
+select *
+from dual;
+
+select 2 + 3
+from dual;
+
+select sysdate
+from dual;
+
+select to_char(sysdate, 'yyyy. mm. dd hh:mi:ss')
+from dual;
+
+create table szemely(
+    id number(3) not NULL,--primary key,
+    vnev varchar2(20),
+    keresztnev varchar2(20),
+    nem char(1),
+    besorolas varchar2(20),
+    constraint szemely_pk primary key(id)
+    
+    
+);
+
+drop table szemely;
+
+alter table szemely
+RENAME COLUMN vnev to vezeteknev;
+
+insert into szemely values(001, 'Kémeri', 'Martin', 'F', 'hallgató');
+insert into szemely values(002, 'Kiss', 'Ibolya', 'N', 'hallgató');
+insert into szemely values(003, 'Varga', 'Laszlo', 'F', 'hallgató');
+insert into szemely values(004, 'Buda', 'Dávidka', 'F', 'hallgató');
+
+    
+  
+select *
+from szemely;
+
+create table Kedvenc(
+    id number(3) not null,
+    kedvenc varchar2(20),
+    faj varchar2(20),
+    kor number(3),
+    gazdi_id number(3) references szemely(id),
+    constraint Kedvenc_pk primary key(id)
+);
+
+drop table Kedvenc;
+
+insert into Kedvenc values(1, 'Fifi', 'kutya', 2, 001);
+insert into Kedvenc values(2, 'Toto', 'kutya', 2, 001);
+insert into Kedvenc values(3, 'Marcipán', 'cica', 2, 001);
+insert into Kedvenc values(4, '', 'hal', '', 002);
+insert into Kedvenc values(5, 'Kifli', 'elefánt', 2, 002);
+insert into Kedvenc values(6, '', 'kacsa', '', 003);
+insert into Kedvenc values(7, 'Lucifer', 'cica', 6, 003);
+insert into Kedvenc values(8, 'Kiik', 'cica', 6, 003);
+
+
+
+select *
+from Kedvenc;
+
+select kedvenc, kor
+from Kedvenc
+where kor > 5;
+
+select kedvenc, kor
+from Kedvenc
+where kor > 5 or kor is null;
+
+select kedvenc
+from Kedvenc
+where faj = 'cica' and kor = 2;
+
+--Első karakter K
+select *
+from Kedvenc
+where kedvenc like 'K%';
+
+
+--Második karakter i
+select *
+from Kedvenc
+where kedvenc like '_i%';
+
+--i-re végződik
+select *
+from Kedvenc
+where kedvenc like '%i';
+
+--Tartalmaz i betűt
+select *
+from Kedvenc
+where kedvenc like '%i%';
+
+--2 i-t tratalmaz
+select *
+from Kedvenc
+where kedvenc like '%i%i%';
+
+--2 i-t tartalmaz de, nem lehet 3 (Pontosan 2 i-t)
+select *
+from Kedvenc
+where kedvenc like '%i%i%' and kedvenc not like '%i%i%i%';
+
+select *
+from szemely sz inner join Kedvenc k
+on sz.id = k.gazdi_id;
+
+--SZ -> Kedvenc
+select *
+from szemely sz left join Kedvenc k
+on sz.id = k.gazdi_id;
+
+--Kedvenc ->SZ
+select *
+from szemely sz right join Kedvenc k
+on sz.id = k.gazdi_id;
+
+
+
+
+
+
