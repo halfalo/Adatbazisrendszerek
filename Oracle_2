@@ -1,0 +1,149 @@
+select *
+from kedvenc;
+
+alter table kedvenc
+add(szin varchar2(20));
+
+update kedvenc 
+set szin = 'fekete'
+where faj = 'cica';
+
+delete from Kedvenc
+where kor BETWEEN 2 and 3;
+commit;
+
+rollback;
+
+update kedvenc
+set szin = 'valószínű'
+where szin is null;
+
+update kedvenc
+set szin = 'fehér'
+where faj = 'kutya';
+
+
+rollback;
+
+select *
+from hr.employees;
+
+select first_name, last_name
+from hr.employees
+where salary < 7700;
+
+select first_name, last_name
+from hr.employees
+where upper(last_name) like '$R$R%';
+
+select first_name, last_name
+from hr.employees
+where upper(last_name) like '$R$R%' and upper(last_name) not like '%R%R%R%';
+
+select trunc(months_between(sysdate, to_date('2001.04.22', 'yyyy.mm.dd'))/12)
+from dual;
+
+select to_char(to_date('20010422', 'yyyymmdd'), 'yyyy.mm.dd')
+from dual;
+
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees;
+
+--2008 után vették fel
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where to_char(hire_date, 'yyyy') >= '2008';
+
+--2008 január és március között vettek fel
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where to_char(hire_date, 'yyyymm') >= '200801' and to_char(hire_date, 'yyyymm') <= '200803';
+
+--10 évnél régebben van a cégnél
+select first_name, last_name, trunc((months_between(sysdate, hire_date))/12)
+from hr.employees
+where months_between(sysdate, hire_date)/12 >=10;
+
+--legfeljebb 15éve vannak a cégnél és a tel számban szerepel 3-as
+select first_name, last_name, trunc((months_between(sysdate, hire_date))/12), phone_number
+from hr.employees
+where months_between(sysdate, hire_date)/12 <= 15 and phone_number like '%3%';
+
+--2007 és 2008 között vettek fel
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where to_char(hire_date, 'yyyy') >= '2007' and to_char(hire_date, 'yyyy') <= '2008';
+
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where to_char(hire_date, 'yyyy') between 2007 and 2008;
+
+select first_name, last_name
+from hr.employees
+order by last_name desc;
+
+select *
+from szemely;
+
+insert into szemely values(5, 'Kovács', 'Irén', 'N', 'demonstrátor');
+insert into szemely values(6, 'Lakatos', 'Brendon', 'F', 'tanár');
+insert into szemely values(7, 'Kovács', 'Pista', 'F', 'tanár');
+insert into szemely values(8, 'Kovács', 'Endzsi', 'N', 'hallgató');
+insert into szemely values(9, 'Kovács', 'Nyelves', 'F', 'tanár');
+
+select vezeteknev, keresztnev
+from szemely
+order by vezeteknev;
+
+select vezeteknev, keresztnev
+from szemely
+order by vezeteknev, kersztnev;
+
+select vezeteknev, keresztnev
+from szemely
+order by vezeteknev, keresztnev desc;
+
+--Kovács vagy Kiss a vezetékneve
+select vezeteknev, keresztnev
+from szemely
+where vezeteknev = 'Kovács' or vezeteknev = 'Kiss';
+
+select *
+from szemely
+where vezeteknev in ('Kiss', 'Kovács');
+
+--akinek a job id-ja nem ST_MAN és nem a SH_CLERK
+select * 
+from hr.employees
+where job_id not in ('ST_MAN', 'SH_CLERK');
+
+select first_name, last_name, nvl(commission_pct, 0)
+from hr.employees;
+
+select kedvenc, nvl(szin, 'nem ismert')
+from Kedvenc;
+
+--azok az emberek akiket októberben vettek fel vagy fizetésük legalább 12000
+select first_name, last_name
+from hr.employees
+where to_char(hire_date, 'mm') = '10' or salary >= 12000;
+
+--fizetés 3200 és 6500 közé esik vagy legálább 15éve vannak a cégnél, veznév alapján 
+select first_name, last_name
+from hr.employees
+where months_between(sysdate, hire_date)/12 >=15 or salary between 3200 and 6500
+order by last_name desc;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
