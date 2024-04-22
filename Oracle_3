@@ -1,0 +1,113 @@
+select *
+from hr.employees;
+
+--Akiket szept.-ben vették fel és a teljes nevükben legalább 2 r szerepel
+select first_name || ' ' || last_name teljes_nev
+from hr.employees
+where upper(concat(first_name, last_name)) like '%R%R%' and to_char(hire_date, 'mm') = 09;
+
+--különböző job id-kat listázzuk ki
+select distinct job_id
+from hr.employees;
+
+--Hány különböző job id szerepel a táblában
+select count(distinct job_id)
+from hr.employees;
+
+select job_id, count(job_id)
+from hr.employees
+group by job_id
+order by 2;
+
+select *
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id;
+
+select job_title, count(emp.job_id)
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+group by job_title;
+
+--Listázzuk ki azokat az embereket akiknek a email J-vel kezdődik és Sales Representative munkakörben dolgozik
+select *
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+where upper(email) like 'J%' and job_title = 'Sales Representative';
+
+--Ki hány projectek dolgozott?
+select first_name, last_name, count(emp.job_id)
+from hr.employees emp inner join hr.job_history his
+on emp.employee_id = his.employee_id
+group by first_name, last_name, emp.job_id;
+
+--egyes munkaköröknél mennyi az min, max, átlag fizu
+select job_title, min(salary), max(salary), avg(salary)
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+group by job_title;
+
+--Mennyi a különség egyes munkáknál a min és a max fizu közötti különbség, eredmények csökkenőbe
+select job_title, max(salary)-min(salary)
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+group by job_title
+order by 2 desc;
+
+--havonta hány embert vettek fel
+select to_char(hire_date, 'mm'), count(job_id)
+from hr.employees
+group by to_char(hire_date, 'mm')
+order by 1;
+
+-- Listázzuk ki azokat a hónapokat, ahol legalább 9 embert vettek fel
+select to_char(hire_date, 'mm'), count(employee_id)
+from hr.employees
+group by to_char(hire_date, 'mm')
+having count(employee_id) >= 9
+order by 1;
+
+--Listázzuk ki azokat a munkaköröket ahol legfeljebb 7-en dolgoznak
+select job_title, count(employee_id)
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+group by job_title
+having count(employee_id) <= 7
+order by 1;
+
+--egyes részlegek mely országban vannak
+select department_name, country_name
+from hr.departments dep inner join hr.locations loc
+on dep.location_id = loc.location_id inner join hr.countries cou
+on loc.country_id = cou.country_id;
+
+--egyes országokban hány különböző részleg van
+select country_name, count(department_id)
+from hr.departments dep inner join hr.locations loc
+on dep.location_id = loc.location_id inner join hr.countries cou
+on loc.country_id = cou.country_id
+group by country_name;
+
+--egyes földrészen hány ország található
+select region_name, count(country_id)
+from hr.regions reg inner join hr.countries cou
+on reg.region_id = cou.region_id
+group by region_name;
+
+--programozók átlagfizetése 2 tizedesjegyre kerekítve
+select job_title, round(avg(salary), 2)
+from hr.employees emp inner join hr.jobs job
+on emp.job_id = job.job_id
+group by job_title
+having job_title = 'Programmer';
+
+
+
+
+
+
+
+
+
+
+
+
