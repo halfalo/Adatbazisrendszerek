@@ -1,0 +1,94 @@
+select department_name, count(emp.employee_id)
+from hr.departments dep inner join hr.employees emp
+on dep.department_id = emp.department_id
+group by dep.department_id, dep.department_name
+having count(emp.employee_id) > 10;
+
+select department_name, round(avg(salary))
+from hr.departments dep inner join hr.employees emp
+on dep.department_id = emp.department_id
+group by dep.department_id, dep.department_name
+having avg(salary) > 5000;
+
+select department_name, count(emp.employee_id), round(avg(salary), 2)
+from hr.departments dep inner join hr.employees emp
+on dep.department_id = emp.department_id
+group by dep.department_id, dep.department_name
+having  count(emp.employee_id) >= 2 and avg(salary) > 4500;
+
+select job_title, count(emp.employee_id)
+from hr.employees emp inner join hr.jobs job
+on job.job_id = emp.job_id
+group by job.job_title
+having count(emp.employee_id) >= 3;
+
+select first_name, last_name, department_name
+from hr.departments dep inner join hr.employees emp
+on dep.department_id = emp.department_id
+where department_name = 'Sales'
+order by department_name;
+
+select first_name, last_name, job_title
+from hr.jobs job inner join hr.employees emp
+on job.job_id = emp.job_id
+where job_title like '%Manager%'
+order by job_title;
+
+--Ki keres az átlagnál többet?
+select first_name, last_name
+from hr.employees
+where salary >(select avg(salary)
+from hr.employees);
+
+--Ki keresi a legkevesebbet
+select first_name, last_name
+from hr.employees
+where salary = (select min(salary)
+from hr.employees);
+
+--Alkalmazottak neve ahol a részlegének a neve 'Sales'
+select first_name, last_name
+from hr.employees
+where department_id = (select department_id
+from hr.departments
+where department_name = 'Sales');
+
+--Alkamozzat neve, belépési dátuma, akinek a belépési dátuma legkorábbi a vállalatban
+select first_name, last_name, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where hire_date = (select min(hire_date)
+from hr.employees);
+
+--Alkamozzat neve, belépési dátuma, akikne a belépési dátuma 2005-nél későbbi
+select first_name || ' ' || last_name teljes_nev, to_char(hire_date, 'yyyy.mm.dd')
+from hr.employees
+where to_char(hire_date, 'yyyy') > 2005;
+
+--Alkalmazottak neve és részlegük neve, ahol a részleg vezetője a 'Sales' részlegen dolgozik
+select first_name, last_name
+from hr.employees emp inner join hr.departments dep
+on emp.manager_id = dep.manager_id
+where dep.department_name = 'Sales';
+
+--Az alkalmazottak neve és részlegük neve, akiknek a pozíciója 'Programmer'
+select first_name, last_name, department_name
+from hr.employees emp inner join hr.departments dep on emp.department_id = dep.department_id
+where job_id = (select job_id
+                from hr.jobs
+                where job_title = 'Programmer');
+                
+
+create table employees as
+select *
+from hr.employees;
+
+
+
+
+
+
+
+
+
+
+
