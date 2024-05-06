@@ -1,0 +1,191 @@
+--Az alkalmazott fizetésének módosítása
+
+select *
+from employees;
+
+update employees
+set salary = 50000
+where months_between(sysdate, hire_date) / 12 < 18;
+
+drop table employees;
+
+--Pozíció nevének a módosítása: Analyst <- Data Analyst
+
+create table employees as
+select *
+from hr.employees;
+
+create table jobs as
+select *
+from hr.jobs;
+
+update jobs
+set job_title = 'Analyst'
+where job_title = 'Data Analyst';
+
+update jobs
+set job_title = 'IT'
+where job_title = 'Programmer';
+
+drop table employees;
+drop table jobs;
+
+--töröljük azokat az embereket, akiknek a nevében legalább 2 g szerepel
+create table employees as
+select *
+from hr.employees;
+
+delete from employees
+where upper(concat(first_name, last_name)) like '%G%G%';
+
+drop table employees;
+
+--Új munkatörténet hozzáadása:
+
+create table job_history as
+select *
+from hr.job_history;
+
+insert into job_history
+values (101, to_date('2024-01-01', 'yyyy-mm-dd'), to-date('2024-04-30', 'yyyy-mm-dd'), 'IT_PROG', 60);
+
+drop table job_history;
+
+--Részlegvezetők fizetésének emelése 10%-al
+create table employees as
+select *
+from hr.employees;
+
+create table departments as
+select *
+from hr.departments;
+
+update employees e inner join departments d
+on e.employee_id = d.manager_id
+set salay = salary * 1.1;
+
+drop table employees;
+drop table departments;
+
+--töröljük azokat, akiknek a vezetékneve r-re végződik és bármely év januárjában vették fel
+create table employees as
+select *
+from hr.employees;
+
+delete from employees
+where last_name like '%r' and to_char(hire_date, 'mm') = '01';
+
+drop table employees;
+
+--Hozzáadunk még 1 oszlopot
+create table employees as
+select *
+from hr.employees;
+
+alter table employees
+add(junior_senior varchar2(10));
+
+-- 18 évnél kevesebb ideje van itt akkor legyen junior
+-- 18 évnél régebben van itt akkor senior
+
+update employees 
+set junior_senior = 'junior'
+where months_between(sysdate, hire_date)/12 < 18;
+
+update employees 
+set junior_senior = 'senior'
+where months_between(sysdate, hire_date)/12 >= 18;
+
+drop table employees;
+
+--módosítsuk a fizetését annak akinek a telefonszámában
+--2 darab 4-es szám van. csökkentsük a fizetést a felére
+create table employees as
+select *
+from hr.employees;
+
+update employees
+set salary = salary * 0.5
+where phone_number like '%4%4%';
+
+drop table employees;
+
+--töröljük ki azt, akit a legkorábban vettek fel
+create table employees as
+select *
+from hr.employees;
+
+select *
+from employees
+where hire_date = (select min(hire_date)
+from employees);
+
+delete from employees
+where hire_date = (select min(hire_date)
+from employees);
+
+drop table employees;
+
+--módosítsuk a commision_pct mezőt, null érték helyett '0' jelenjen meg
+create table employees as
+select *
+from hr.employees;
+
+update employees
+set commission_pct = 0
+where commission_pct is null;
+
+drop table employees;
+
+--módosítsuk IT_PROG job_id-ra ha a kezdés és a befejezés ideje kevesebb volt mint 3 év
+create table job_history as
+select *
+from hr.job_history;
+
+update job_history
+set job_id = 'IT_PROG'
+where end_date - start_date < (3*365);
+
+drop table employees;
+drop table job_history;
+
+--töröljük azokat akiket vagy júniusban vettek fel vagy a fizetésük 6500 és 8000 közé esik
+create table employees as
+select *
+from hr.employees;
+
+delete from employees
+where to_char(hire_date, 'mm') = 06 or salary between 6500 and 8000;
+
+drop table employees;
+
+--töröljük azokat akinek a vezetéknevében szóköz található
+create table employees as
+select *
+from hr.employees;
+
+delete from employees
+where last_name like '% %';
+
+drop table employees;
+
+--töröljük azokat a sorokat ahol a manager_id nem 1-ra végződik
+create table employees as
+select *
+from hr.employees;
+
+delete from employees
+where manager_id not like '%1';
+
+drop table employees;
+
+
+
+
+
+
+
+
+
+
+
